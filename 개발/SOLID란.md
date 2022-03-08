@@ -38,7 +38,7 @@ class Job {
 객체의 책임을 다음과 같이 분리할 수 있다.
 
 ```java
-// SRP 원칙을 지키기 위해 책임 분리
+// SRP를 지키기 위해 책임 분리
 interface Job {
   void work();
 }
@@ -64,6 +64,7 @@ class Singer implements Job {
   }
 }
 ```
+각 직업 객체들이 하나의 업무만 책임지고 있다.
 
 # OCP (Open Closed Principle) 개방 폐쇄 원칙
 
@@ -73,73 +74,98 @@ class Singer implements Job {
 다음과 같은 Person 객체가 있다.
 ```java
 class Person {
-  private final Developer developer;
-  
-  public Person(Developer developer) {
-    this.developer = developer;
-  }
-  
-  void makeMoney() {
-    developer.work();
+  void programming() {
+    System.out.println("개발을 한다.");
   }
 }
 
-class Developer {
+class Main {
+  private Person person;
+
+  public Main(Person person) {
+    this.person = person;
+  }
+  
   void work() {
-    System.out.print("개발을 한다.");
+    person.programming();
   }
 }
 ```
 
-어느 날 Person 객체가 개발자를 그만두고 가수로 전직한 상황이면 MakeMoney 메서드에서  
-System.out.print("노래를 한다.") 로직이 수행되어야 한다.  
-위 같은 설계로는 Person객체가 의존하고 있는 Developer객체를 교체해야 하므로 OCP 원칙에 어긋난다.  
+어느 날 Person 객체가 개발자를 그만두고 가수로 전직한 상황이라 programming 메서드가 sing 메서드로 변경 됐다.  
+위 같은 설계로는 Main 클래스의 work 메서드에서 에러가 날 것이다.  
 
 ```java
 class Person {
-  private final Job job;
+  // void programming() {
+  //   System.out.print("개발을 한다.");
+  // }
   
-  public Person(Job job) {
-    this.job = job;
-  }
-  
-  void makeMoney() {
-    job.work();
+  void sing() {
+    System.out.print("노래를 한다.");
   }
 }
 
+class Main {
+  private Person person;
+
+  public Main(Person person) {
+    this.person = person;
+  }
+  
+  void work() {
+    person.programming(); // Error
+  }
+}
+```
+
+위 코드처럼 Person 객체의 업무 메서드는 언제는 변할 수 있으므로 문제가 발생하기 쉽다. work를 interface로 분리하자.
+
+```java
 interface Job {
   void work();
 }
 
-class Singer implements Job {
+class Person implements Job {
   @Override
   void work() {
-    System.out.print("노래를 한다.");
+    // programming();
+    sing();
+  }
+  
+  private void programming() {
+    System.out.print("개발을 한다.")
+  }
+  
+  private void sing() {
+    System.out.print("노래를 한다.")
   }
 }
 
-class Developer implement Job {
-  @Override
-  void work() {
-    System.out.print("노래를 한다.");
+class Main {
+  private Person person;
+  
+  public Main(Person person) {
+    this.person = person;
+  }
+  
+  void makeMoney() {
+    person.work();
   }
 }
-
 ```
+위 코드는 work 메서드에 변동이 생겨도 코드에 문제가 없다. 또한 programming 메서드 자체는 수정할 수 없고(Closed),
+새로운 메서드인 sing을 만들어 확장에는 열려 있다(Open).
 
-다음과 같이 Developer 구현체와 Singer 구현체에게 work 메서드의 구현을 맡긴다면  
-Person 객체는 수정할 필요 없이(Closed) 직업 구현체의 work 메서드를 재정의하면 된다.(Open)
+# LSP (Liskov Substitution Principle) 리스코프 치환 원칙
 
-# LSP (Liskov Substitution Principle) 리스코프 치환
-
-> 부모 클래스와 자식 클래스 사이의 행위에는 일관성이 있어야 한다는 원칙이다.  
+> 자료형 B가 자료형 A의 하위형이라면 프로그램의 속성 변경 없이 자료형 A의 객체를 자료형 B의 객체로 치환할 수 있어야 하는 원칙.  
 > 즉, 부모 클래스의 인스턴스 대신 자식 클래스의 인스턴스를 사용해도 문제가 없어야 한다.
 
 <br>
 
-가장 흔한 예로 직사각형과 정사각형이 있다.
-정사각형은 직사각형의 성질을 갖기 때문에, 정사각형을 직사각형으로 표현할 수 있다.
+가장 흔한 예로 직사각형과 정사각형이 있다. 정사각형은 직사각형의 성질을 갖기 때문에,  
+직사각형(부모) - 정사각형(자식) 관계로 정의할 수 있다. 그럼 정사각형이 직사각형을 대체할 수 있는지 코드로 보자. 
 
 ```java
 // 직사각형
@@ -205,4 +231,127 @@ class Main {
 
 # ISP (Interface Segregation Principle) 인터페이스 분리 원칙
 
-# DIP (Dependency Inversion Principle) 의존 역전 
+> 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다.  
+> 클라이언트 입장에서 사용하는 기능만 제공하도록 인터페이스를 분리하는 것이다.  
+> 어떻게 보면 SRP와 비슷하지만, SRP는 단순히 객체의 책임을 나눴다면 ISP는 인터페이스로 분리하는 것이다.
+
+
+```java
+interface Developer {
+  void 프론트엔드_업무();
+  void 백엔드_업무();
+  void 안드로이드_업무();
+}
+
+class FrontEndDeveloper implements Developer {
+  @Override
+  void 프론트엔드_업무() { ... }
+  
+  @Override
+  void 백엔드_업무() { ... } // 사용하지 않는 인터페이스가 변경되어도 수정해야함
+  
+  @Override
+  void 안드로이드_업무() { ... } // 사용하지 않는 인터페이스가 변경되어도 수정해야함
+}
+```
+
+위 같은 코드는 FrontEndDeveloper에는 필요없는 백엔드_업무 메서드와, 안드로이드_업무 메서드를 Override하고 있으므로  
+Developer 인터페이스에서 두 메서드에 리턴 타입 등 변화가 생기면 FrontEndDeveloper 클래스에도 수정이 필요하다.  
+이는 ISP를 위반한다. ISP를 적용하면 다음과 같이 인터페이스를 분리할 수 있다.
+
+```java
+interface FrontEnd {
+  void 프론트엔드_업무();
+}
+
+interface BackEnd {
+  void 백엔드_업무();
+}
+
+interface Android {
+  void 안드로이드_업무();
+}
+
+class FrontEndDeveloper implements FronEnd {
+  @Override
+  void 프론트엔드_업무() {
+    System.out.print("프론트 엔드 업무");
+  }
+}
+```
+
+이제 백엔드_업무, 안드로이드_업무 메서드가 변해도 FrontEndDeveloper 객체에는 영향을 끼치지 않는다.
+
+# DIP (Dependency Inversion Principle) 의존 역전 원칙
+
+> 추상화에 의존해야지, 구체화에 의존하면 안된다. 추상화는 세부 사항에 의존해서는 안된다.  
+> 핵심은 의존 관계를 맺을 때 변하기 쉬운 것에 의존하는게 아니라, 변하지 않는 것에 의존하는 것이다.  
+> 의존성 주입이 DIP 지키는 방법 중 하나이다.
+
+
+```java
+// DIP를 위반한 예
+class KakaoLogin {
+  void signIn() {
+    System.out.print("Kakao Login");
+  }
+}
+
+class LoginService {
+  private KakaoLogin login;
+  
+  public LoginService(KakaoLogin login) {
+    this.login = login;
+  }
+  
+  void login() {
+    login.signIn();
+  }
+}
+```
+
+다음과 같은 코드를 사용하던 도중 로그인을 KakaoLogin이 아닌 GoogleLogin을 사용한다고 했을 때
+KakaoLogin 클래스에 의존하는 LoginService 클래스의 코드를 변경해야된다. 이는 변경에 전혀 유연하지 않다.  
+다음은 추상화에 의존하는 경우다.
+
+```java
+interface Login {
+  void signIn();
+}
+
+class KakaoLogin {
+  @Override
+  void signIn() {
+    System.out.print("Kakao Login");
+  }
+}
+
+class GoogleLogin {
+  @Override
+  void signIn() {
+    System.out.print("Google Login")
+  }
+}
+
+class LoginService {
+  private Login login;
+  
+  public LoginService(Login login) {
+    this.login = login;
+  }
+  
+  void login() {
+    login.signIn();
+  }
+}
+```
+
+LoginService 어디에도 구현체에(KakaoLogin, GoogleLogin) 의존하는 코드를 찾아볼 수 없다.  
+다음과 같이 추상화(Login)에만 의존하는 경우 KakaoLogin을 사용했더라도 LoginService 코드는 수정하지 않고,  
+의존성 주입을 통해 GoogleLogin을 사용할 수 있다.
+
+# References
+- [[Java] 객체지향 설계 5원칙 - SOLID](https://sehun-kim.github.io/sehun/solid/)
+- [SOLID LSP(Liskov Substitution Principle)이란? 리스코프 치환 원칙](https://huisam.tistory.com/entry/LSP)
+- [인터페이스 분리 원칙 (ISP, Interface Segregation Principle)](https://jaeseongdev.github.io/development/2021/04/25/ISP(%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99)/#google_vignette)
+- [IoC, DI, DIP 개념잡기](https://vagabond95.me/posts/about-ioc-dip-di/)
