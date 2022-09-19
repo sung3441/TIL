@@ -14,3 +14,8 @@ Ubuntu에서 직접 mysql 명령어를 치면 접속이 되지만, 외부에서 
 'YOUR IP' 부분에 '%'를 넣으면 들어오는 모든 아이피에 해당된다.
 
 설정 후 외부에서 다시 접속을 시도하면 연결에 성공한다.
+
+<br>
+
+# 참조
+[Host 'xxx.xx.xxx.xxx' is not allowed to connect to this MySQL server](https://stackoverflow.com/questions/1559955/host-xxx-xx-xxx-xxx-is-not-allowed-to-connect-to-this-mysql-server)
