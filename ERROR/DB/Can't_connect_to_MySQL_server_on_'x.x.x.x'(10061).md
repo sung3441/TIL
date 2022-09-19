@@ -30,3 +30,8 @@ tcp6  0   0   ::::3306            :::*            LISTEN     -
 ```
 
 HeidiSQL과 같은 툴로 다시 시도하면 접속에 연결에 성공한다.
+
+<br>
+
+# 참조
+[MYSQL(MariaDB)에서 외부접근이 되지않을때.(Feat. Can’t Connect To MySQL Server On ‘192.168.X.X'(10061)](https://blog.dalso.org/it/4260)
