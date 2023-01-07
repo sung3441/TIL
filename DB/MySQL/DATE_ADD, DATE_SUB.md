@@ -1,0 +1,51 @@
+# DATE_ADD
+
+```
+DATE_ADD(기준 날짜, 추가할 시간)
+```
+
+```
+# 현재 시간 + 1초
+SELECT DATE_ADD(NOW(), INTERVAL 1 SECOND);
+
+# 현재 시간 + 1분
+SELECT DATE_ADD(NOW(), INTERVAL 1 MINUTE);
+
+# 현재 시간 + 1시간
+SELECT DATE_ADD(NOW(), INTERVAL 1 HOUR);
+
+# 현재 시간 + 1일
+SELECT DATE_ADD(NOW(), INTERVAL 1 DAY);
+
+# 현재 시간 + 1달
+SELECT DATE_ADD(NOW(), INTERVAL 1 MONTH);
+
+# 현재 시간 + 1년
+SELECT DATE_ADD(NOW(), INTERVAL 1 YEAR);
+```
+
+# DATE_SUB
+
+```
+DATE_SUB(기준 날짜, 뺄 시간)
+```
+
+```
+# 현재 시간 - 1초
+SELECT DATE_SUB(NOW(), INTERVAL 1 SECOND);
+
+# 현재 시간 - 1분
+SELECT DATE_SUB(NOW(), INTERVAL 1 MINUTE);
+
+# 현재 시간 - 1시간
+SELECT DATE_SUB(NOW(), INTERVAL 1 HOUR);
+
+# 현재 시간 - 1일
+SELECT DATE_SUB(NOW(), INTERVAL 1 DAY);
+
+# 현재 시간 - 1달
+SELECT DATE_SUB(NOW(), INTERVAL 1 MONTH);
+
+# 현재 시간 - 1년
+SELECT DATE_SUB(NOW(), INTERVAL 1 YEAR);
+```
