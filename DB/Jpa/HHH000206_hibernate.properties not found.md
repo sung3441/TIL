@@ -1,6 +1,6 @@
 # HHH000206: hibernate.properties not foud 에러 해결
 
-jdk 11 + jpa를 사용하면 HHH000206 에러가 발생한다.  
+jdk 11 + jpa를 사용하면 HHH000206 에러가 발생한다.
 
 ### 원인, 해결
 
